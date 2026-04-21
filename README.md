@@ -100,19 +100,19 @@ chemistry. Edwards et al. conceptualize this as a **series of filters**:
                 Billions of soil bacteria
                     ▼  (first filter)
            ┌─────────────────────────┐
-           │       Rhizosphere        │  ← soil immediately surrounding roots
-           │   soil enriched by       │    ~1–2 mm zone; shaped by exudates
-           │   root exudates          │
+           │       Rhizosphere       │  ← soil immediately surrounding roots
+           │   soil enriched by      │    ~1–2 mm zone; shaped by exudates
+           │   root exudates         │
            └─────────────┬───────────┘
                          ▼  (second filter)
            ┌─────────────────────────┐
-           │       Rhizoplane         │  ← root surface
-           │   root surface biofilm   │    attached to epidermal cells
+           │       Rhizoplane        │  ← root surface
+           │   root surface biofilm  │    attached to epidermal cells
            └─────────────┬───────────┘
                          ▼  (third filter: tightest)
            ┌─────────────────────────┐
-           │       Endosphere         │  ← root interior
-           │   inside root tissue     │    inside living plant cells
+           │       Endosphere        │  ← root interior
+           │   inside root tissue    │    inside living plant cells
            └─────────────────────────┘
 ```
 
@@ -218,7 +218,7 @@ downloaded by individual students:
 
 ```
 /fs/scratch/PAS3260/Team_Project/Containers/QIIME2/
-├── qiime2_amplicon_2024.10.sif    ← QIIME2 2024.10 Apptainer container
+├── qiime2.sif    ← QIIME2 2024.5 Apptainer container
 ├── silva-138-99-515-806-nb-classifier.qza   ← pre-trained V4 classifier
 └── tutorial_metadata/
     ├── accessions_tutorial_subset.txt       ← 16 SRR accessions
@@ -231,7 +231,7 @@ downloaded by individual students:
 
 | Tool | Version | Purpose | Source |
 | --- | --- | --- | --- |
-| QIIME2 (amplicon distribution) | 2024.10 | Full amplicon analysis pipeline | quay.io/qiime2/amplicon |
+| QIIME2 (amplicon distribution) | 2024.5 | Full amplicon analysis pipeline | quay.io/qiime2/amplicon |
 | sra-tools | 3.2.1 | Download reads from NCBI SRA | Seqera community |
 | FastQC | 0.12.1 | Per-read quality assessment | Seqera community |
 | MultiQC | 1.25.1 | Aggregate QC report | Seqera community |

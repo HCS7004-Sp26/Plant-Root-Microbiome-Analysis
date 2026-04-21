@@ -55,9 +55,9 @@ export MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
 export CONTAINERS=/fs/scratch/PAS3260/${user_name}/Microbiome/containers
 
 # Shared QIIME2 resources (pre-installed, read-only)
-export SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-export Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
-export SILVA_CLASSIFIER=${SHARED_Q2}/silva-138-99-515-806-nb-classifier.qza
+export SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+export Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
+export SILVA_CLASSIFIER=${SHARED_Q2}/Classifiers/silva-138-99-nb-classifier.qza 
 export TUTORIAL_META=${SHARED_Q2}/tutorial_metadata
 ```
 
@@ -66,8 +66,8 @@ Confirm the shared resources are accessible:
 ```bash
 ls -lh ${SHARED_Q2}/
 # Expected output:
-# qiime2_amplicon_2024.10.sif
-# silva-138-99-515-806-nb-classifier.qza
+# Classifiers
+# Containers
 # tutorial_metadata/
 
 ls -lh ${TUTORIAL_META}/
@@ -134,9 +134,9 @@ cat >> ~/.bashrc << EOF
 export user_name=${user_name}
 export MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
 export CONTAINERS=/fs/scratch/PAS3260/${user_name}/Microbiome/containers
-export SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-export Q2_CONTAINER=\${SHARED_Q2}/qiime2_amplicon_2024.10.sif
-export SILVA_CLASSIFIER=\${SHARED_Q2}/silva-138-99-515-806-nb-classifier.qza
+export SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+export Q2_CONTAINER=\${SHARED_Q2}/Containers/qiime2.sif
+export SILVA_CLASSIFIER=\${SHARED_Q2}/Classifiers/silva-138-99-nb-classifier.qza
 export TUTORIAL_META=\${SHARED_Q2}/tutorial_metadata
 EOF
 
@@ -179,18 +179,18 @@ echo "Started: $(date)"
 
 # ---- sra-tools (SRA download) ----
 apptainer pull \
-  ${CONTAINERS}/sratools_3.2.1.sif \
+  ${CONTAINERS}/sratools.sif \
   oras://community.wave.seqera.io/library/sra-tools:3.2.1--846898724ee33c64
 
 # ---- FastQC (per-read quality assessment) ----
 apptainer pull \
-  ${CONTAINERS}/fastqc_0.12.1.sif \
+  ${CONTAINERS}/fastqc.sif \
   oras://community.wave.seqera.io/library/fastqc:0.12.1--104d26ddd9519960
 
 # ---- MultiQC (aggregate QC report) ----
 apptainer pull \
-  ${CONTAINERS}/multiqc_1.25.1.sif \
-  oras://community.wave.seqera.io/library/multiqc:1.25.1--cfcd6e69b2b5b32c
+  ${CONTAINERS}/multiqc.sif \
+  oras://community.wave.seqera.io/library/multiqc:1.34--4fc8657c816047c0
 
 echo ""
 echo "=== All utility containers pulled ==="
@@ -224,15 +224,15 @@ apptainer exec \
 echo ""
 echo "=== Utility containers ==="
 echo -n "sra-tools:  "
-apptainer exec ${CONTAINERS}/sratools_3.2.1.sif \
+apptainer exec ${CONTAINERS}/sratools.sif \
   fastq-dump --version 2>&1 | grep "fastq-dump"
 
 echo -n "FastQC:     "
-apptainer exec ${CONTAINERS}/fastqc_0.12.1.sif \
+apptainer exec ${CONTAINERS}/fastqc.sif \
   fastqc --version 2>&1
 
 echo -n "MultiQC:    "
-apptainer exec ${CONTAINERS}/multiqc_1.25.1.sif \
+apptainer exec ${CONTAINERS}/multiqc.sif \
   multiqc --version 2>&1
 
 echo ""
@@ -243,8 +243,8 @@ Expected output from `qiime info`:
 ```
 System versions
 Python version: 3.9.x
-QIIME 2 release: 2024.10
-QIIME 2 version: 2024.10.x
+QIIME 2 release: 2026.1
+QIIME 2 version: 2026.1.x
 ...
 ```
 
@@ -302,9 +302,9 @@ set -euo pipefail
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
 CONTAINERS=${MICROBIOME}/containers
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
-SILVA_CLASSIFIER=${SHARED_Q2}/silva-138-99-515-806-nb-classifier.qza
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
+SILVA_CLASSIFIER=${SHARED_Q2}/Classifiers/silva-138-99-nb-classifier.qza
 TUTORIAL_META=${SHARED_Q2}/tutorial_metadata
 ```
 
@@ -315,7 +315,7 @@ TUTORIAL_META=${SHARED_Q2}/tutorial_metadata
 * `echo ${user_name}` prints your OSC username (not empty)
 * `echo ${MICROBIOME}` prints `/fs/scratch/PAS3260/<your_username>/Microbiome`
 * `tree -d ${MICROBIOME}` shows the full directory structure
-* `ls ${SHARED_Q2}/` lists `qiime2_amplicon_2024.10.sif`, `silva-138-99-515-806-nb-classifier.qza`, and `tutorial_metadata/`
+* `ls ${SHARED_Q2}/` lists `Classifiers/`, `Containers/`, and `tutorial_metadata/`
 * `ls ${TUTORIAL_META}/` lists `accessions_tutorial_subset.txt` and `metadata.tsv`
 * All 3 utility container `.sif` files exist in `${CONTAINERS}/`
 * QIIME2 container prints version string without errors (Step 6)

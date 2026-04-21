@@ -6,23 +6,24 @@
 
 ## Background
 
-The Edwards et al. dataset (BioProject **PRJNA238564**) contains ~600 samples
-spanning three rice cultivars, four root compartments, three developmental
-stages, and two California field sites. For this tutorial we work with a
-curated pedagogical subset: **16 samples** representing the Nipponbare
-cultivar at the vegetative stage from the Sacramento field site, with four
-replicates per compartment (bulk soil, rhizosphere, rhizoplane, endosphere).
-This design isolates the **compartment gradient** — the central scientific
-variable — while keeping computational demands feasible.
+The Edwards et al. dataset (BioProject **PRJNA255789**) contains ~600 samples
+spanning multiple cultivars, four root compartments, multiple developmental
+stages, and greenhouse and field study arms. For this tutorial we work with a
+curated pedagogical subset from the **greenhouse arm** of the experiment:
+**16 samples** representing the M104 cultivar (*Oryza sativa* temperate
+japonica) grown in Sacramento agricultural soil at the vegetative stage
+(~42 days), with four replicates per compartment (bulk soil, rhizosphere,
+rhizoplane, endosphere). This design isolates the **compartment gradient** —
+the central scientific variable — while keeping computational demands feasible.
 
 ### Why This Subset?
 
 | Full dataset | Tutorial subset | Reason |
 | --- | --- | --- |
 | ~600 samples | 16 samples | Computationally tractable on OSC |
-| 3 cultivars | Nipponbare only | Focus on compartment gradient hypothesis |
-| 2 field sites | Sacramento only | Remove site-to-site variation as a confounder |
-| 3 time points | Vegetative only | Single time point; cleanest design |
+| Multiple cultivars | M104 only | Only cultivar with n=4 across all 4 compartments at Sacramento |
+| Greenhouse + field arms | Greenhouse only | Single controlled soil source; no site × season confounders |
+| Sacramento soil | Sacramento soil | Matches greenhouse arm of Edwards et al. |
 | 4 compartments | All 4 | Preserve the full spatial gradient |
 
 ### About the Metadata File
@@ -44,19 +45,35 @@ cat ${TUTORIAL_META}/metadata.tsv
 ```
 
 You should see columns including `sample-id`, `compartment`, `cultivar`,
-`field-site`, `developmental-stage`, and `replicate`. The `compartment`
+`field-site`, `growth-system`, `developmental-stage`, `replicate`,
+`collection-date`, and `description`. The `compartment`
 column (values: `BulkSoil`, `Rhizosphere`, `Rhizoplane`, `Endosphere`) is
 the primary grouping variable for all downstream analyses.
 
 ### About the Accession File
 
-```
+```bash
 ${TUTORIAL_META}/accessions_tutorial_subset.txt
 ```
 
-This file lists 16 SRR accessions — one per line — corresponding to the
-16 samples in the tutorial subset. You will use it to drive the SRA
-download in Step 2.
+This file lists the 16 SRR accessions — one per line — corresponding to the
+16 samples in the tutorial subset:
+
+```
+SRR1524591   BulkSoil     rep1        SRR1524594   Rhizosphere  rep1
+SRR1524637   BulkSoil     rep2        SRR1524639   Rhizosphere  rep2
+SRR1524797   BulkSoil     rep3        SRR1524794   Rhizosphere  rep3
+SRR1524813   BulkSoil     rep4        SRR1524814   Rhizosphere  rep4
+SRR1524596   Rhizoplane   rep1        SRR1524598   Endosphere   rep1
+SRR1524641   Rhizoplane   rep2        SRR1524643   Endosphere   rep2
+SRR1524795   Rhizoplane   rep3        SRR1524796   Endosphere   rep3
+SRR1524815   Rhizoplane   rep4        SRR1524816   Endosphere   rep4
+```
+
+All 16 samples share collection date 2013-05-06 and greenhouse run `GHRun1`,
+ensuring uniform library preparation. Bulk soil samples were matched to their
+corresponding M104 plant collection block by JE.Soil sample ID proximity.
+You will use this file to drive the SRA download in Step 2.
 
 ---
 
@@ -134,7 +151,7 @@ while IFS= read -r accession; do
 
   apptainer exec \
     --bind ${MICROBIOME}:/data \
-    ${CONTAINERS}/sratools_3.2.1.sif \
+    ${CONTAINERS}/sratools.sif \
     fasterq-dump \
       --outdir /data/00_raw_reads \
       --temp /tmp \
@@ -207,7 +224,7 @@ echo "Started: $(date)"
 
 apptainer exec \
   --bind ${MICROBIOME}:/data \
-  ${CONTAINERS}/fastqc_0.12.1.sif \
+  ${CONTAINERS}/fastqc.sif \
   fastqc \
     --outdir /data/01_qc \
     --threads 8 \
@@ -218,7 +235,7 @@ echo "=== MultiQC: aggregate QC report ==="
 
 apptainer exec \
   --bind ${MICROBIOME}:/data \
-  ${CONTAINERS}/multiqc_1.25.1.sif \
+  ${CONTAINERS}/multiqc.sif \
   multiqc \
     --outdir /data/01_qc/multiqc \
     --filename multiqc_report.html \
@@ -248,10 +265,12 @@ Open `multiqc_report.html` in your browser and note:
 2. Whether R2 quality drops appreciably before position 200
 3. Adapter content signal (guides whether trimming is needed)
 
-> **For Edwards et al. data:** These reads were sequenced on Illumina HiSeq
-> with 2×150 bp chemistry. Expect good R1 quality throughout, with some R2
-> quality decline after ~130 bp. This will directly inform your DADA2
-> truncation parameters in Module 3.
+> **For this tutorial's data (SRR1524591–SRR1524816):** These reads were
+> sequenced on an Illumina MiSeq with 2×251 bp chemistry. Expect very good
+> R1 quality throughout and a modest R2 quality decline in the last 20–30 bp.
+> The longer read length provides generous overlap for DADA2 merging across
+> the ~253 bp V4 amplicon. This will directly inform your truncation
+> parameters in Module 3.
 
 ---
 
@@ -312,8 +331,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== QIIME2 Import: PairedEndFastqManifestPhred33V2 ==="
 echo "Started: $(date)"
@@ -379,11 +398,12 @@ key figure for choosing your DADA2 truncation lengths in Module 3.
 4. How many reads per sample (check the "Per-sample sequence counts" tab)?
    Are any samples substantially under-sequenced?
 
-> **Guideline for Edwards et al. V4 data (2×150 bp):**
-> Typical truncation values are `--p-trunc-len-f 150` and `--p-trunc-len-r 130`.
-> Your exact values should be determined by the interactive quality plot.
-> The V4 amplicon is ~253 bp; truncating to 150 + 130 = 280 bp total gives
-> a ~27 bp overlap, sufficient for merging.
+> **Guideline for this tutorial's MiSeq 2×251 bp data:**
+> Typical truncation values are `--p-trunc-len-f 230` and `--p-trunc-len-r 200`.
+> Your exact values must be determined from your own quality plot.
+> The V4 amplicon is ~253 bp; truncating to 230 + 200 = 430 bp retained
+> gives ~177 bp of overlap — well above the 20 bp minimum — so merging
+> efficiency should be high.
 
 ---
 

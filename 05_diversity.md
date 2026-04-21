@@ -100,12 +100,14 @@ Choose a rarefaction depth that:
 2. Is as deep as possible given constraint 1
 3. Is a round number for readability (e.g., 1000, 2000, 5000)
 
-> **For Edwards et al. endosphere samples:** These are known to have
-> relatively low read counts (~1,000–5,000 reads per sample) after
-> contamination filtering, because much of the amplified DNA in root
-> interior samples is of plant origin. A depth of **1,000–2,000 reads**
-> typically retains all samples. You may need to exclude individual
-> samples with very low counts. Document your choice and reasoning.
+> **For this tutorial's greenhouse M104 samples:** Endosphere samples
+> typically have lower read counts after contamination filtering, because
+> plant organellar sequences dominate the amplicon pool from root interior
+> tissue. Check your `table-no-contam-summary.qzv` from Module 4 to find
+> the actual minimum. For the MiSeq 2×251 bp runs in this tutorial, a depth
+> of **3,000–5,000 reads** often retains all samples. You may need to
+> exclude individual samples with very low counts. Always document your
+> choice and reasoning.
 
 Run the rarefaction curve visualization to help choose the depth:
 
@@ -125,8 +127,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== Alpha rarefaction curves ==="
 echo "Started: $(date)"
@@ -165,7 +167,7 @@ The `core-metrics-phylogenetic` pipeline rarefies your table, then
 computes alpha and beta diversity metrics in a single command, outputting
 a comprehensive set of artifacts.
 
-> **Replace `SAMPLING_DEPTH` below with your chosen value from Step 1.**
+> **Replace `SAMPLING_DEPTH` (line 192) below with your chosen value from Step 1.**
 
 ```bash
 cat > ${MICROBIOME}/scripts/05b_core_diversity.sh << 'EOF'
@@ -183,11 +185,11 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 # ---- Set your rarefaction depth here ----
-SAMPLING_DEPTH=2000    # ← replace with your chosen depth
+SAMPLING_DEPTH=10000    # ← replace with your chosen depth
 
 echo "=== Core diversity metrics ==="
 echo "Sampling depth: ${SAMPLING_DEPTH}"
@@ -260,8 +262,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 DIVERSITY_RESULTS=${MICROBIOME}/02_qiime2/diversity/core-metrics-results
 
@@ -314,8 +316,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== Beta diversity significance testing (PERMANOVA) ==="
 echo "Grouping variable: compartment"

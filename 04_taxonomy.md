@@ -29,7 +29,7 @@ from public repositories. We use SILVA release 138 because:
 - The QIIME2 pre-trained classifier is available for exactly the 515F/806R V4 amplicon
 - It is the reference database most compatible with the original Edwards et al. analysis
 
-The pre-trained classifier (`silva-138-99-515-806-nb-classifier.qza`) is
+The pre-trained classifier (`silva-138-99-nb-classifier.qza`) is
 pre-installed in the shared class directory. **Do not attempt to re-train it.**
 Training a SILVA classifier requires ~32 GB of RAM and several hours of compute.
 
@@ -73,9 +73,9 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
-SILVA_CLASSIFIER=${SHARED_Q2}/silva-138-99-515-806-nb-classifier.qza
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
+SILVA_CLASSIFIER=${SHARED_Q2}/Classifiers/silva-138-99-nb-classifier.qza
 
 echo "=== Taxonomic Classification: SILVA 138 naïve Bayes ==="
 echo "Started: $(date)"
@@ -87,7 +87,7 @@ apptainer exec \
   --env MPLCONFIGDIR=/tmp \
   ${Q2_CONTAINER} \
   qiime feature-classifier classify-sklearn \
-    --i-classifier /shared/silva-138-99-515-806-nb-classifier.qza \
+    --i-classifier /shared/Classifiers/silva-138-99-nb-classifier.qza  \
     --i-reads      /data/02_qiime2/denoising/rep-seqs.qza \
     --p-n-jobs 16 \
     --o-classification /data/02_qiime2/taxonomy/taxonomy.qza \
@@ -184,8 +184,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== Filtering chloroplasts, mitochondria, and unassigned features ==="
 echo "Started: $(date)"
@@ -270,8 +270,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== Phylogenetic tree construction ==="
 echo "Pipeline: MAFFT alignment → masking → FastTree → midpoint rooting"

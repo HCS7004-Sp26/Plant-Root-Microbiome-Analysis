@@ -84,16 +84,16 @@ Key criteria:
    (V4 amplicon ≈ 253 bp; minimum retained length: 253 + 20 = 273 bp)
 2. Truncate where median quality drops below **Q25**
 
-For Edwards et al. 2×150 bp data, typical values are:
+For this tutorial's MiSeq 2×251 bp data, typical values are:
 
 ```
---p-trunc-len-f 150   (R1: truncate at position 150)
---p-trunc-len-r 130   (R2: truncate at position 130)
+--p-trunc-len-f 230   (R1: truncate at position 230)
+--p-trunc-len-r 200   (R2: truncate at position 200)
 ```
 
 > **Adjust these values based on your own quality plot.** The values above
-> are a starting point for 2×150 bp data with high-quality R1 and moderate
-> quality R2. If your R2 drops earlier, use a shorter truncation to avoid
+> are a starting point for 2×251 bp data with high-quality R1 and moderate
+> quality R2 tail. If your R2 drops earlier, use a shorter truncation to avoid
 > retaining low-quality bases that increase chimera formation.
 
 ---
@@ -122,12 +122,12 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 # ---- Truncation lengths: adjust based on your demux-summary.qzv ----
-TRUNC_F=150
-TRUNC_R=130
+TRUNC_F=230
+TRUNC_R=200
 
 echo "=== DADA2 Denoising ==="
 echo "Started: $(date)"
@@ -188,8 +188,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== Denoising stats visualization ==="
 
@@ -255,12 +255,12 @@ You will see a table with the following columns:
 | `non-chimeric` | After chimera removal | < 75% of merged → chimera rate is high |
 | `passed-filter` | Final retained reads | < 1,000 per sample → may need to be excluded |
 
-**Typical expected values for Edwards et al. data:**
+**Typical expected values for this MiSeq 2×251 bp dataset:**
 
-- 70–85% of input reads pass quality filtering
-- 85–95% of filtered reads merge successfully
+- 85–95% of input reads pass quality filtering (longer reads, excellent quality)
+- 90–97% of filtered reads merge successfully (generous overlap at 2×251 bp)
 - 90–98% of merged reads are non-chimeric
-- Final retention: ~65–75% of input reads
+- Final retention: ~75–85% of input reads
 
 > **If merging efficiency is low** (< 50%): the R1 and R2 truncated reads
 > do not overlap sufficiently. Reduce either truncation length to increase

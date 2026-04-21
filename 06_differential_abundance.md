@@ -99,8 +99,8 @@ set -euo pipefail
 
 user_name=Jonathan    # ← replace with your OSC username
 MICROBIOME=/fs/scratch/PAS3260/${user_name}/Microbiome
-SHARED_Q2=/fs/scratch/PAS3260/Team_Project/Containers/QIIME2
-Q2_CONTAINER=${SHARED_Q2}/qiime2_amplicon_2024.10.sif
+SHARED_Q2=/fs/scratch/PAS3260/Microbiome
+Q2_CONTAINER=${SHARED_Q2}/Containers/qiime2.sif
 
 echo "=== ANCOM-BC: Differential abundance across compartments ==="
 echo "Formula: compartment (reference level: BulkSoil)"
@@ -288,9 +288,11 @@ to compile evidence for and against each hypothesis:
 
 - **Shotgun metagenomics** of the endosphere samples to profile functional gene
   content and identify metabolic pathways enriched by host selection
-- **Comparative analysis across cultivars:** Does *Oryza sativa japonica* vs.
-  *indica* select for different endosphere communities? This is directly testable
-  with the full Edwards et al. dataset (you used only Nipponbare here)
+- **Comparative analysis across cultivars and conditions:** Does M104 vs.
+  Nipponbare vs. IR50 select for different endosphere communities? Does the
+  greenhouse community differ from the field-grown community using the same
+  soil? Both questions are directly testable with the full Edwards et al.
+  dataset (you used only M104 greenhouse samples here)
 - **Developmental time series:** How does the endosphere community shift from
   vegetative stage through flowering to grain fill?
 - **Microbial isolation and inoculation experiments:** Can endosphere-enriched
@@ -348,4 +350,4 @@ ${MICROBIOME}/
 ---
 
 *Tutorial complete. Data source: Edwards et al. (2015) PNAS 112:E911–E920,
-BioProject PRJNA238564. Pipeline: QIIME2 2024.10 amplicon distribution.*
+BioProject PRJNA255789. Pipeline: QIIME2 2024.5 amplicon distribution.*
